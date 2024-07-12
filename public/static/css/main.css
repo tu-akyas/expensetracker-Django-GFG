@@ -202,9 +202,9 @@ input[type="text"], input[type="number"] {
     transition: opacity 0.3s ease;
 }
 
-.notification-container.show {
+/* .notification-container.show {
     opacity: 1;
-}
+} */
 
 .notification-container p {
     margin: 0;
