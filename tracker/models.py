@@ -8,12 +8,17 @@ EXPENSE_TYPE_CHOICES = (
 )
 
 class CurrentBalance(models.Model):
-    current_balance = models.FloatField(default=0)
+    current_balance = models.FloatField(default=0, editable=False)
+
+    def __str__(self):
+        return f"{self.current_balance}"
 
 class TrackingHistory(models.Model):
-    current_balance = models.ForeignKey(CurrentBalance, on_delete=models.CASCADE)
-    amount = models.FloatField()
+    current_balance = models.ForeignKey(CurrentBalance, on_delete=models.CASCADE, editable=False)
+    amount = models.FloatField(editable=False)
     description = models.CharField(max_length=150)
-    expense_type = models.CharField(max_length=10, choices=EXPENSE_TYPE_CHOICES)
+    expense_type = models.CharField(max_length=10, choices=EXPENSE_TYPE_CHOICES, editable=False)
     created_at = models.DateTimeField(auto_now=True)
     
+    def __str__(self):
+        return f"{self.description} - {abs(self.amount)} - {self.expense_type}"
