@@ -22,3 +22,9 @@ class TrackingHistory(models.Model):
     
     def __str__(self):
         return f"{self.description} - {abs(self.amount)} - {self.expense_type}"
+    
+class RequestLogs(models.Model):
+    request_info = models.TextField()
+    request_method = models.CharField(max_length=100)
+    request_path = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now=True)
