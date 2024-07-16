@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
 from .models import CurrentBalance, TrackingHistory
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 # Create your views here.
 
 def index(request):
@@ -66,4 +68,54 @@ def delete_transaction(request, id):
         print("Transaction Does not exist")
         
     return redirect("/")
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = User.objects.filter(username = username)
+        if not user.exists():
+            messages.error(f"user {username} does not exist")
+            return redirect("/login/")
+        
+        user = authenticate(username=username, password=password)
+        
+        if not user:
+            messages.error("Incorrect Password")
+            return redirect("/login/")
+        
+        login(request, user)
+        return redirect('/')
+    return render(request, 'login.html')
+
+def signup_view(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        firstname = request.POST.get('firstname')
+        lastname = request.POST.get('lastname')
+        password = request.POST.get('password')
+        
+        user = User.objects.filter(username = username)
+        if user.exists():
+            messages.error(request, "Username already taken")
+            return redirect("/signup/")
+        
+        user = User.objects.create(
+            username = username,
+            first_name = firstname,
+            last_name = lastname
+        )
+        
+        user.set_password(password)
+        user.save()
+        messages.success(request, "User Created")
+        
+        login(request, user)
+        return redirect("/")
+            
+    return render(request, 'signup.html')
+
+def logout_view(request):
+    pass
 
