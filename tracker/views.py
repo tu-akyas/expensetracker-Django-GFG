@@ -3,8 +3,10 @@ from .models import CurrentBalance, TrackingHistory
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
+@login_required(login_url="login_view")
 def index(request):
     
     # Initialize
@@ -56,6 +58,7 @@ def index(request):
     }
     return render(request, 'index.html', context=context)
 
+@login_required(login_url="login_view")
 def delete_transaction(request, id):
     transaction = TrackingHistory.objects.get(id=id)
     
@@ -76,13 +79,13 @@ def login_view(request):
         
         user = User.objects.filter(username = username)
         if not user.exists():
-            messages.error(f"user {username} does not exist")
+            messages.error(request, f"user '{username}'x does not exist")
             return redirect("/login/")
         
         user = authenticate(username=username, password=password)
         
         if not user:
-            messages.error("Incorrect Password")
+            messages.error(request, "Incorrect Password")
             return redirect("/login/")
         
         login(request, user)
@@ -116,6 +119,8 @@ def signup_view(request):
             
     return render(request, 'signup.html')
 
+@login_required(login_url="login_view")
 def logout_view(request):
-    pass
+    logout(request)
+    return redirect('/login/')
 
